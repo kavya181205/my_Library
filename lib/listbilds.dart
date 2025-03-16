@@ -16,7 +16,7 @@ class Bookcardbuilder extends StatelessWidget {
 
           return Container(
 
-            width: MediaQuery.of(context).size.width*0.40,
+            width: MediaQuery.of(context).size.width*0.9,
               child: GestureDetector(
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context){return Bookpage(book: book);}));
@@ -26,13 +26,13 @@ class Bookcardbuilder extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        height: 130,
+                        height: 170,
                         child: Image.asset(book.img,
                           fit: BoxFit.cover,
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width*0.35,
+                        width: MediaQuery.of(context).size.width*0.9,
                         decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black))),
                       ),
                       Text(book.name)
