@@ -1,88 +1,116 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/book_list.dart';
+import 'package:my_library/book_page.dart';
+import 'package:my_library/book_provider.dart';
+import 'package:my_library/favorites_page.dart';
 import 'package:my_library/loginpage.dart';
 import 'package:my_library/profilepage.dart';
 import 'package:my_library/sign_up.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex=0;
+  int _selectedIndex = 0;
   final List<String> imageList = [
     'assets/images/andrews-library-best-libraries-in-surat-264x300.jpg',
     'assets/images/narbad_library_after.jpg',
     'assets/images/shri-keshubhai-patel-smc-library-surat-libraries-1536x864.webp',
   ];
+  bool isLoggedIn = true;
+  List<String> genres = books.map((book) => book.genre).toSet().toList();
+  String? selectedGenre;
+  Set<Book> favoriteBooks = {};
 
-  final Map<String, String> filters = {
-    'Fiction': 'Books that tell made-up stories.',
-    'Non-Fiction': 'Books that are based on real events and facts.',
-    'Science Fiction': 'Books with futuristic and scientific themes.',
-    'Fantasy': 'Books with magical or supernatural elements.',
-  };
-  bool isLoggedIn = false;
-
+ 
+  void toggleFavorite(Book book) {
+    setState(() {
+      if (favoriteBooks.contains(book)) {
+        favoriteBooks.remove(book);
+      } else {
+        favoriteBooks.add(book);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Library"),
-        backgroundColor: Colors.blue,
-        actions: [
-          isLoggedIn
-              ? GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
-                    );
-                  },
-                  child:const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, color: Colors.blue),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(35),
+        child: AppBar(
+          title: const Text(
+            "My Library",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          toolbarHeight: 35,
+          backgroundColor: Colors.white,
+          actions: [
+            isLoggedIn
+                ? GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.black,
+                        child: Icon(Icons.person, color: Colors.blue, size: 20),
+                      ),
                     ),
+                  )
+                : Row(
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Loginpage(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignupPage(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Signup",
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              : Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Loginpage()),
-                        );
-                      },
-                      child:
-                          Text("Login", style: TextStyle(color: Colors.white)),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignupPage()),
-                        );
-                      },
-                      child:
-                          Text("Signup", style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-        ],
+          ],
+        ),
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
+              decoration:
+                  BoxDecoration(color: Color.fromARGB(255, 232, 234, 235)),
               child: Text(
                 "Welcome!",
                 style: TextStyle(color: Colors.white, fontSize: 22),
@@ -91,58 +119,78 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text("Home"),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.book),
               title: const Text("Books"),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text("Profile"),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite),
+              title: const Text("My favorites books"),
+              onTap: () => Navigator.push(
+                  context,
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return FavoritesPage(favoriteBooks: favoriteBooks);
+                      },
+                    ),
+                  ) as Route<Object?>),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
           ],
         ),
       ),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
             SizedBox(
-              height: 50, // Fixed height
+              height: 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: filters.length,
+                itemCount: books.map((book) => book.genre).toSet().length,
                 itemBuilder: (context, index) {
-                  String key = filters.keys.elementAt(index);
+                  List<String> uniqueGenres =
+                      books.map((book) => book.genre).toSet().toList();
+                  String genre = uniqueGenres[index];
+                  if (books.where((book) => book.genre == genre).isEmpty) {
+                    return SizedBox.shrink();
+                  }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: Chip(
-                      label: Text(
-                        key,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade800,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => selectedGenre = genre);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    BookListPage(selectedGenre: genre)));
+                      },
+                      child: Chip(
+                        label: Text(
+                          genre,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade800,
+                          ),
                         ),
+                        backgroundColor: Colors.blue.shade100,
                       ),
-                      backgroundColor: Colors.blue.shade100,
                     ),
                   );
                 },
@@ -152,84 +200,131 @@ class _HomePageState extends State<HomePage> {
             CarouselSlider(
               options: CarouselOptions(
                 height: 200.0,
-                initialPage: 0,
                 autoPlay: true,
                 autoPlayInterval: const Duration(seconds: 3),
-                autoPlayAnimationDuration: const Duration(milliseconds: 800),
                 enlargeCenterPage: true,
                 viewportFraction: 1.0,
               ),
               items: imageList.map((imagePath) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: Container(
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
                     width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                    ),
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 15),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Fiction',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                itemCount: books.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    width: 130,
-                    height: 250,
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          books[index].img,
-                          fit: BoxFit.cover,
-                          height: 200,
-                          width: 200,
-                        )
-                      ],
-                    ),
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: genres.map((genre) {
+                  List<Book> genreBooks =
+                      books.where((book) => book.genre == genre).toList();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          genre,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 180,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: genreBooks.length,
+                          itemBuilder: (context, index) {
+                            Book book = genreBooks[index];
+                            bool isFavorite = favoriteBooks.contains(book);
+                            return GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text(book.name),
+                                    content: const Text(
+                                        "Would you like to add this book to your favorites?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          toggleFavorite(book);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(isFavorite
+                                            ? "Remove from Favorites"
+                                            : "Add to Favorites"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Cancel"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 130,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image.asset(book.img,
+                                                fit: BoxFit.cover,
+                                                width: 130,
+                                                height: 150),
+                                          ),
+                                          Positioned(
+                                            top: 5,
+                                            right: 5,
+                                            child: Icon(
+                                              isFavorite
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: isFavorite
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      book.name,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                      )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   );
-                },
+                }).toList(),
               ),
             ),
-           Text(
-            "abs"
-            
-           )
           ],
         ),
       ),
-        bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
@@ -239,10 +334,8 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Create'),
         ],
       ),
     );
   }
 }
-
