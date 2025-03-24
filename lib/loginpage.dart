@@ -11,16 +11,16 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  bool _rememberMe = false;
+  String? _email;
+  String? _password;
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Logging in...')),
+        const SnackBar(content: Text('Processing Data')),
       );
-      // TODO: Add actual login logic here (e.g., API call, Firebase authentication)
+      // TODO: Implement actual login logic with "Remember Me" functionality
     }
   }
 
@@ -31,120 +31,117 @@ class _LoginPageState extends State<LoginPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SafeArea(
-                    child: Text(
-                      'LOGIN',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Email Field
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  
-                  // Password Field
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters long';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Forgot Password Button (Properly Aligned)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ForgotPassword()),
-                        );
-                      },
-                      child: const Text('Forgot Password?'),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Login Button
-                  ElevatedButton(
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: const Text('LOGIN'),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Sign Up Navigation
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      const Text("Don't have an account? "),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SignupPage()),
-                          );
+                      const SafeArea(
+                        child: Text(
+                          'LOGIN',
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'Enter your email',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
                         },
-                        child: const Text('Sign Up'),
+                        onSaved: (value) {
+                          _email = value;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters long';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _password = value;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Remember Me Checkbox
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _rememberMe,
+                            onChanged: (value) {
+                              setState(() {
+                                _rememberMe = value!;
+                              });
+                            },
+                          ),
+                          const Text("Remember Me"),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ForgotPassword(),
+                                ),
+                              );
+                            },
+                            child: const Text('Forgot Password?'),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: _submit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        child: const Text('LOGIN'),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't have an account?"),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignupPage(),
+                                ),
+                              );
+                            },
+                            child: const Text('Sign up'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
