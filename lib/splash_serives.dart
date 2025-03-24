@@ -6,7 +6,7 @@ class Splashserives{
 
   void isLogin(BuildContext context){
     
-    Timer(Duration(seconds:3), () => Navigator.push(context, MaterialPageRoute(builder: (context)=> Loginpage())));
+    Timer(Duration(seconds:3), () => Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginPage())));
 
   }
 
