@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'book_list.dart'; // Import your book list model
+import 'book_list.dart';
+import 'package:my_library/Bookpage.dart';// Import your book list model
 
 class FavoritesPage extends StatelessWidget {
   final Set<Book> favoriteBooks;
@@ -32,34 +33,39 @@ class FavoritesPage extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   Book book = favoriteBooks.elementAt(index);
-                  return Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                            child: Image.asset(book.img, fit: BoxFit.cover, width: double.infinity),
+                  return GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context){return Bookpage(book: book);}));
+                    },
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                              child: Image.asset(book.img, fit: BoxFit.cover, width: double.infinity),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            book.name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              book.name,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            // Remove book from favorites and refresh UI
-                            (context as Element).markNeedsBuild();
-                            favoriteBooks.remove(book);
-                          },
-                        ),
-                      ],
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              // Remove book from favorites and refresh UI
+                              (context as Element).markNeedsBuild();
+                              favoriteBooks.remove(book);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

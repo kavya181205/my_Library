@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_library/book_list.dart'; 
-
+import 'package:my_library/Bookpage.dart';
 class BookListPage extends StatelessWidget {
   final String selectedGenre;
 
@@ -32,13 +32,18 @@ class BookListPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset(
-                        book.img, 
-                        height: 180,
-                        width: 140,
-                        fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context){return Bookpage(book: book);}));
+                    },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset(
+                          book.img,
+                          height: 180,
+                          width: 140,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 5),
