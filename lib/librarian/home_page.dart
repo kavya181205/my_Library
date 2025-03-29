@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:my_library/Addbooklist.dart';
+import 'package:my_library/booklistpage.dart';
+import 'package:my_library/help.dart';
+import 'package:my_library/libeditpage.dart';
 import 'package:my_library/librarian/Member_list.dart';
 import 'package:my_library/librarian/book.dart';
 import 'package:my_library/librarian/dashboardcard.dart';
 import 'package:my_library/librarian/issue_book.dart';
 import 'package:my_library/librarian/profile.dart';
+import 'package:my_library/return_page.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -60,11 +65,12 @@ class _HomepageState extends State<Homepage> {
             ),
             _buildDrawerItem(Icons.home, "Home",Page:Homepage()),
             _buildDrawerItem(Icons.person, "Profile",Page:Profile()),
-            _buildDrawerItem(Icons.menu_book, "Add Book",Page:Homepage()),
-            _buildDrawerItem(Icons.menu, "Book List",Page:Homepage()),
+            _buildDrawerItem(Icons.menu_book, "Add Book",Page:ADDBooklist()),
+            _buildDrawerItem(Icons.menu, "Book List",Page:Booklist()),
             _buildDrawerItem(Icons.menu, "Member List",Page:MemberList()),
             _buildDrawerItem(Icons.menu_book, "Issue Book",Page:IssueBook()),
-            _buildDrawerItem(Icons.menu_book, "Return Book",Page:Homepage()),
+            _buildDrawerItem(Icons.menu_book, "Return Book",Page:Returnpage()),
+            _buildDrawerItem(Icons.help, "help",Page:Help()),
             _buildDrawerItem(Icons.logout, "Log Out",Page:Homepage()),
           ],
         ),
@@ -81,11 +87,16 @@ class _HomepageState extends State<Homepage> {
               borderRadius: BorderRadius.circular(8),
               child: Stack(
                 children: [
-                  Image.asset(
-                    'assets/images/bookstack.jpg',
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Libeditpage()));
+                    },
+                    child: Image.asset(
+                      'assets/images/bookstack.jpg',
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const Positioned(
                     left: 20,
