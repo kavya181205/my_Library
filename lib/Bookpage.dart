@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/book_list.dart';
 
@@ -47,10 +46,9 @@ class _bookpage extends State<Bookpage>{
                     children: [
                       Container(
                         padding: EdgeInsets.only(left: 10),
-                        width: MediaQuery.of(context).size.width*0.7,
+                        width: MediaQuery.of(context).size.width*0.8,
                         child:  Text(book.name,textAlign: TextAlign.left, style: TextStyle(fontSize: 20),),),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.favorite)),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.share))
+                      Container(width: MediaQuery.of(context).size.width*0.15, alignment: Alignment.centerRight,child: IconButton(onPressed: (){}, icon: Icon(Icons.favorite))),
                     ],
                   ),
                 ),
@@ -69,10 +67,7 @@ class _bookpage extends State<Bookpage>{
                           padding: EdgeInsets.only(left: 10),
                           child: Text("Description:${book.description}", style: TextStyle(fontSize: 20)),
                           alignment: Alignment.centerLeft),
-                      Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Available at: ", style: TextStyle(fontSize: 20)),
-                          alignment: Alignment.centerLeft),
+
                     ]
                   ),
                 )
