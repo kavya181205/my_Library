@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'book_list.dart'; // Import your book list model
+import 'book_list.dart';
+import 'package:my_library/Bookpage.dart';
 
-class FavoritesPage extends StatelessWidget {
+class FavoritesPage extends StatefulWidget {
   final Set<Book> favoriteBooks;
 
   const FavoritesPage({Key? key, required this.favoriteBooks}) : super(key: key);
 
+  @override
+  _FavoritesPageState createState() => _FavoritesPageState();
+}
+
+class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +19,7 @@ class FavoritesPage extends StatelessWidget {
         title: const Text("My Favorite Books"),
         backgroundColor: Colors.blueAccent,
       ),
-      body: favoriteBooks.isEmpty
+      body: widget.favoriteBooks.isEmpty
           ? const Center(
               child: Text(
                 "No Favorite Books Yet!",
@@ -23,43 +29,53 @@ class FavoritesPage extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.all(10.0),
               child: GridView.builder(
-                itemCount: favoriteBooks.length,
+                itemCount: widget.favoriteBooks.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 books per row
+                  crossAxisCount: 2, 
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   childAspectRatio: 0.7,
                 ),
                 itemBuilder: (context, index) {
-                  Book book = favoriteBooks.elementAt(index);
-                  return Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                            child: Image.asset(book.img, fit: BoxFit.cover, width: double.infinity),
+                  Book book = widget.favoriteBooks.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Bookpage(book: book),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                              child: Image.asset(book.img, fit: BoxFit.cover, width: double.infinity),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            book.name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              book.name,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            // Remove book from favorites and refresh UI
-                            (context as Element).markNeedsBuild();
-                            favoriteBooks.remove(book);
-                          },
-                        ),
-                      ],
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              setState(() {
+                                widget.favoriteBooks.remove(book); // Update state
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
