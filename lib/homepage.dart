@@ -2,13 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/book_list.dart';
 import 'package:my_library/book_page.dart';
-import 'package:my_library/book_provider.dart';
 import 'package:my_library/favorites_page.dart';
+import 'package:my_library/help.dart';
 import 'package:my_library/loginpage.dart';
 import 'package:my_library/profilepage.dart';
 import 'package:my_library/sign_up.dart';
-import 'package:provider/provider.dart';
-
+import 'package:my_library/Searchpage.dart';
+import 'package:my_library/Bookpage.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -245,29 +245,7 @@ class _HomePageState extends State<HomePage> {
                             bool isFavorite = favoriteBooks.contains(book);
                             return GestureDetector(
                               onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text(book.name),
-                                    content: const Text(
-                                        "Would you like to add this book to your favorites?"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          toggleFavorite(book);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(isFavorite
-                                            ? "Remove from Favorites"
-                                            : "Add to Favorites"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("Cancel"),
-                                      ),
-                                    ],
-                                  ),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context){return Bookpage(book: book);}));
                               },
                               child: Container(
                                 width: 130,
@@ -289,14 +267,38 @@ class _HomePageState extends State<HomePage> {
                                           Positioned(
                                             top: 5,
                                             right: 5,
-                                            child: Icon(
+                                            child: IconButton(onPressed:() {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text(book.name),
+                                                  content: const Text(
+                                                      "Would you like to add this book to your favorites?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        toggleFavorite(book);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text(isFavorite
+                                                          ? "Remove from Favorites"
+                                                          : "Add to Favorites"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context),
+                                                      child: const Text("Cancel"),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }, icon: Icon(
                                               isFavorite
                                                   ? Icons.favorite
                                                   : Icons.favorite_border,
                                               color: isFavorite
                                                   ? Colors.red
                                                   : Colors.grey,
-                                            ),
+                                            )),
                                           ),
                                         ],
                                       ),
@@ -331,9 +333,16 @@ class _HomePageState extends State<HomePage> {
             _selectedIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+        items: [
+          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: GestureDetector(onTap:(){
+            Navigator.push(context, MaterialPageRoute(builder: (context){return Searchpage();}));
+          } ,
+            child: Icon(Icons.search),), label: 'Search',),
+          BottomNavigationBarItem(icon: GestureDetector(onTap:(){
+            Navigator.push(context, MaterialPageRoute(builder: (context){return Help();}));
+          } ,
+            child: Icon(Icons.help),), label: 'Help',),
         ],
       ),
     );
